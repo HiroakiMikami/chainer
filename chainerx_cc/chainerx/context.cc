@@ -13,6 +13,9 @@
 #ifdef CHAINERX_ENABLE_CUDA
 #include "chainerx/cuda/cuda_backend.h"
 #endif  // CHAINERX_ENABLE_CUDA
+#ifdef CHAINERX_ENABLE_XRT
+#include "chainerx/xrt/xrt_backend.h"
+#endif  // CHAINERX_ENABLE_XRT
 #include "chainerx/dynamic_lib.h"
 #include "chainerx/error.h"
 #include "chainerx/macro.h"
@@ -80,6 +83,11 @@ Backend& Context::GetBackend(const std::string& backend_name) {
         backend = std::unique_ptr<Backend, context_detail::BackendDeleter>{
                 new cuda::CudaBackend{*this}, context_detail::BackendDeleter{[](gsl::owner<Backend*> ptr) { delete ptr; }}};
 #endif  // CHAINERX_ENABLE_CUDA
+#ifdef CHAINERX_ENABLE_XRT
+    } else if (backend_name == xrt::XrtBackend::kDefaultName) {
+        backend = std::unique_ptr<Backend, context_detail::BackendDeleter>{
+                new xrt::XrtBackend{*this}, context_detail::BackendDeleter{[](gsl::owner<Backend*> ptr) { delete ptr; }}};
+#endif // CHAINERX_ENABLE_XRT
     } else {
         // Load .so file
         std::string so_file_path = GetChainerxPath() + "/backends/" + backend_name + ".so";
