@@ -11,6 +11,7 @@
 #include "chainerx/device.h"
 #include "chainerx/routines/creation.h"
 #include "chainerx/testing/threading.h"
+#include "chainerx/native/native_backend.h"
 
 namespace chainerx {
 namespace xrt {
@@ -129,6 +130,19 @@ TEST(XrtBackendIncompatibleTransferTest, SupportsTransferDifferentContexts) {
     Device& device0 = backend0.GetDevice(0);
     Device& device1 = backend1.GetDevice(0);
     EXPECT_FALSE(backend0.SupportsTransfer(device0, device1));
+}
+
+TEST(XrtBackendIncompatibleTransferTest, SupportsTransferNativeBackends) {
+    Context ctx;
+    XrtBackend xrt_backend{ctx};
+    native::NativeBackend native_backend0{ctx};
+    native::NativeBackend native_backend1{ctx};
+    Device& device = xrt_backend.GetDevice(0);
+    Device& device0 = native_backend0.GetDevice(0);
+    Device& device1 = native_backend1.GetDevice(0);
+    EXPECT_TRUE(xrt_backend.SupportsTransfer(device, device0));
+    EXPECT_TRUE(xrt_backend.SupportsTransfer(device0, device));
+    EXPECT_FALSE(xrt_backend.SupportsTransfer(device0, device1));
 }
 
 template <int N>
