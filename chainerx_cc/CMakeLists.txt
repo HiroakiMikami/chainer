@@ -33,6 +33,13 @@ else()
 endif()
 option(CHAINERX_BUILD_CUDA "Build CUDA backend (if CUDA is available)" ${DEFAULT_CHAINERX_BUILD_CUDA})
 
+if(DEFINED ENV{CHAINERX_BUILD_XRT})
+    set(DEFAULT_CHAINERX_BUILD_XRT $ENV{CHAINERX_BUILD_XRT})
+else()
+    set(DEFAULT_CHAINERX_BUILD_XRT OFF)
+endif()
+option(CHAINERX_BUILD_XRT "Build XRT backend (if Tensorflow is available)" ${DEFAULT_CHAINERX_BUILD_XRT})
+
 # Allow to specify *one* --generate-code option of the nvcc command.
 # Supposed usage is to avoid slowness of PTX JIT compilation on development.
 set(CHAINERX_NVCC_GENERATE_CODE "$ENV{CHAINERX_NVCC_GENERATE_CODE}" CACHE STRING "nvcc --generate-code option")
@@ -77,6 +84,15 @@ if(${CHAINERX_BUILD_CUDA})
             list(APPEND CUDA_NVCC_FLAGS -Xcompiler /MD)
         endif()
 
+    endif()
+endif()
+
+# XRT
+if(${CHAINERX_BUILD_XRT})
+    find_package(Tensorflow QUIET)
+    if(${TENSORFLOW_FOUND})
+        add_definitions(-DCHAINERX_ENABLE_XRT=1)
+        include_directories(${TENSORFLOW_INCLUDE_DIRS})
     endif()
 endif()
 
