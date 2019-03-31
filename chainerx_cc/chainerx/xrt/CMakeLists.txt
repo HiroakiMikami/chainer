@@ -7,6 +7,7 @@ install(FILES
     col2im.h
     im2col.h
     tensor_dot.h
+    xrt_local_service.h
     DESTINATION include/chainerx/xrt
     )
 
@@ -28,7 +29,8 @@ add_library(chainerx_xrt STATIC
     xrt_backend.cc
     col2im.cc
     im2col.cc
-    tensor_dot.cc)
+    tensor_dot.cc
+    xrt_local_serivce.cc)
 
 include_directories(${TENSORFLOW_INCLUDE_DIRS})
 target_link_libraries(chainerx_xrt ${TENSORFLOW_LIBRARIES})
@@ -37,6 +39,7 @@ if(${CHAINERX_BUILD_TEST})
   add_executable(chainerx_xrt_test
       xrt_backend_test.cc
       xrt_device_test.cc
+      xrt_local_service_test.cc
   )
   target_link_libraries(chainerx_xrt_test
       chainerx

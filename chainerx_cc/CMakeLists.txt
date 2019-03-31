@@ -93,6 +93,11 @@ if(${CHAINERX_BUILD_XRT})
     if(${TENSORFLOW_FOUND})
         add_definitions(-DCHAINERX_ENABLE_XRT=1)
         include_directories(${TENSORFLOW_INCLUDE_DIRS})
+
+        # TODO Tensorflow depens on abseil
+        set(PROTOBUF_VERSION ${TENSORFLOW_PROTOBUF_VERSION})
+        get_third_party(protobuf)
+        include_directories(${CMAKE_CURRENT_BINARY_DIR}/protobuf-src/src)
     endif()
 endif()
 
