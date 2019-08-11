@@ -106,6 +106,7 @@ TEST(XrtBackendTest, GetName) {
 }
 
 TEST(XrtBackendTest, SupportsTransferThreadSafe) {
+    /* TODO it is unclear whether we can transfer data from a replica to another replica */
     static constexpr size_t kThreadCount = 2;
 
     Context ctx0{};
